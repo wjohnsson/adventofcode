@@ -1,5 +1,11 @@
 package adventofcode;
 
+// http://adventofcode.com/2017/day/2
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class CorruptChecksum {
 	
 	private final static String SPREADSHEET = "1364	461	1438	1456	818	999	105	1065	314	99	1353	148	837	590	404	123\r\n" + 
@@ -18,36 +24,53 @@ public class CorruptChecksum {
 			"215	2092	1603	1001	940	2054	245	2685	206	1043	2808	208	194	2339	2028	2580\r\n" + 
 			"378	171	155	1100	184	937	792	1436	1734	179	1611	1349	647	1778	1723	1709\r\n" + 
 			"4463	4757	201	186	3812	2413	2085	4685	5294	5755	2898	200	5536	5226	1028	180";
+	private static String TEST = "5 9 2 8\r\n" + 
+								 "9 4 7 3\r\n" + 
+								 "3 8 6 5";
 	
 	public static void main(String[] args) {
-		System.out.println(checkSum(SPREADSHEET));
-//		System.out.println(checkRow("1364	461	1438	1456	818	999	105	1065	314	99	1353	148	837	590	404	123"));
+		System.out.println("Answer part one: " + partOne(SPREADSHEET));
+		System.out.println("Answer part two: " + partTwo(SPREADSHEET));
 	}
 	
-	private static int checkSum(String spreadSheet) {
+	private static int partOne(String ss) {
 		int sum = 0;
-		String[] rows = spreadSheet.split("\r\n");
 		
-		for (String r : rows) {
-			sum += checkRow(r);
+		for (String row : ss.split("\r\n")) {
+			// turns the numbers in the string into a list of integers
+			List<Integer> parsed = parseRow(row);
+			int smallest = parsed.get(0);
+			int largest = parsed.get(0);
+			
+			for (int num : parsed) {
+				if (num > largest) {
+					largest = num;
+				} else if (num < smallest) {
+					smallest = num;
+				}
+			}
+			sum += (largest - smallest);
 		}
 		
 		return sum;
 	}
 	
-	private static int checkRow(String row) {
-		int[] nums = parseString(row.split("\t"));
+	private static int partTwo(String ss) {
 		int sum = 0;
 		
-		for (int i = 0; i < nums.length; i++) {
-			for (int j = i+1; j < nums.length; j++) {
-				if (nums[i] > nums[j]) {
-					if (nums[i] % nums[j] == 0) {
-						sum += nums[i] / nums[j];
-					}
-				} else {
-					if (nums[j] % nums[i] == 0) {
-						sum += nums[j] / nums[i];
+		for (String row : ss.split("\r\n")) {
+			List<Integer> parsed = parseRow(row);
+			
+			for (int i = 0; i < parsed.size(); i++) {
+				for (int j = i+1; j < parsed.size(); j++) {
+					int n1 = parsed.get(i);
+					int n2 = parsed.get(j);
+					
+					// need to compare both ways
+					if (n1 % n2 == 0) {
+						sum += n1 / n2;
+					} else if (n2 % n1 == 0) {
+						sum += n2 / n1;
 					}
 				}
 			}
@@ -56,13 +79,13 @@ public class CorruptChecksum {
 		return sum;
 	}
 	
-	private static int[] parseString(String[] s) {
-		int nums[] = new int[s.length];
+	private static List<Integer> parseRow(String row) {
+		List<Integer> asInts = new ArrayList<Integer>();
 		
-		for (int i = 0; i < nums.length; i++) {
-			nums[i] = Integer.parseInt(s[i]);
+		for (String num : row.split("\t")) {
+			asInts.add(Integer.parseInt(num));
 		}
 		
-		return nums;
+		return asInts;
 	}
 }
