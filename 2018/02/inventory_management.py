@@ -34,4 +34,26 @@ def part_one():
         file.close()
 
 
+def part_two():
+    lines = []
+    with open("ids.txt") as file:
+        for line in file:
+            lines.append(line)
+        file.close()
+
+    for i in range(len(lines)):
+        for j in range(i + 1, len(lines)):
+            count_common = 0
+
+            common_char = ''
+            for k in range(len(lines[i])):
+                if lines[i][k] == lines[j][k]:
+                    count_common += 1
+                    common_char = lines[i][k]
+
+            if count_common == 1:
+                return common_char
+
+
 print("Part one answer: " + str(part_one()))
+print("Part two answer: " + str(part_two()))
