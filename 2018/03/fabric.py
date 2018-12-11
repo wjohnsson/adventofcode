@@ -12,7 +12,7 @@ class Claim:
 
 
 def parse_claim(claim):
-    """Parses an input string"""
+    """Handles parsing of an input string."""
     # Coordinates on one side, dimensions on the other
     claim = claim.split(":")
 
@@ -28,10 +28,27 @@ def parse_claim(claim):
 
 
 def part_one():
-    with open("claims.txt") as file:
-        claims = [parse_claim(c) for c in file.readlines()]
+    with open("claims.txt") as f:
+        # Create an empty fabric where each element is a square inch.
+        fabric = [[0 for _ in range(1000)] for _ in range(1000)]
 
-        file.close()
+        claims = [parse_claim(c) for c in f.readlines()]
+
+        for claim in claims:
+            for x in range(claim.size_x):
+                for y in range(claim.size_y):
+                    # Add a layer to the specified square inch of fabric.
+                    fabric[x + claim.x][y + claim.y] += 1
+
+        # Count overlaps
+        overlaps = 0
+        for row in range(len(fabric)):
+            for col in range(len(fabric[row])):
+                if fabric[row][col] >= 2:
+                    overlaps += 1
+
+        return overlaps
+        f.close()
 
 
-part_one()
+print("Answer part one: " + str(part_one()))
