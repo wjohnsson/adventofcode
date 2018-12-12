@@ -6,10 +6,12 @@ class Claim:
         self.y = y
         self.size_x = size_x
         self.size_y = size_y
+        self.overlaps = False
 
     def __str__(self):
         return str(self.x) + "," + str(self.y) + \
                ": " + str(self.size_x) + "x" + str(self.size_y)
+
 
 def parse_claim(claim):
     """Handles parsing of an input string."""
@@ -57,9 +59,8 @@ def part_one():
 
 
 def empty_id_fabric():
-    """Creates an empty fabric where each element is a tuple containing the claim_id of the top layer and amount
-    of layers below it."""
-    return [[[0, 0] for _ in range(1000)] for _ in range(1000)]
+    """Creates an empty fabric where each element is a list of claims"""
+    return [[[] for _ in range(1000)] for _ in range(1000)]
 
 
 def part_two():
@@ -70,19 +71,19 @@ def part_two():
         for claim in claims:
             for x in range(claim.size_x):
                 for y in range(claim.size_y):
-                    # Add a layer to the specified square inch of fabric and update
-                    # the top layer.
-                    fabric[x + claim.x][y + claim.y][0] = claim.claim_id
-                    fabric[x + claim.x][y + claim.y][1] += 1
+                    # Add a layer to the specified square inch of fabric
+                    fabric[x + claim.x][y + claim.y].append(claim)
 
-        # Find the claim of fabric with no overlap
-        no_overlap_claim = None
-        for row in range(len(fabric)):
-            for col in range(len(fabric[row])):
-                if fabric[row][col][1] == 1:
-                    claim_id = fabric[row][col][0]
+                    # There is overlap.
+                    if len(fabric[x + claim.x][y + claim.y]) > 1:
+                        for claim in fabric[x + claim.x][y + claim.y]:
+                            claim.overlaps = True
 
-        return claim_id
+        # Find the claim of fabric with no overlap.
+        for claim in claims:
+            if not claim.overlaps:
+                return claim.claim_id
+
         f.close()
 
 
