@@ -1,4 +1,5 @@
 from datetime import datetime
+from itertools import groupby
 
 
 class Event:
@@ -20,6 +21,17 @@ class Guard:
     def sleepiest_minute(self):
         return max(set(self.minutes_asleep_list),
                    key=self.minutes_asleep_list.count)
+
+    def most_freq(self):
+        length_encoding = [(len(list(cgen)), c) for c, cgen in
+                           groupby(sorted(self.minutes_asleep_list))]
+
+        most_freq = length_encoding[0]
+        for x, y in length_encoding[1:]:
+            if most_freq[0] < x:
+                most_freq = (x, y)
+
+        return most_freq
 
     def __str__(self):
         return "Guard #" + str(self.guard_id) + ", time slept: " + \
@@ -50,6 +62,7 @@ def get_guard_id(event):
     return int(event.note.split("#")[1].split(" ")[0])
 
 
+# This solution is **really** messy :( pls no look
 def main():
     with open("scribbles.txt") as f:
 
@@ -91,15 +104,22 @@ def main():
                 wakeup_time = event.datetime_object
                 time_slept_known = True
 
-        for g_id, g in guards.items():
-            print(str(g_id) + " " + str(g))
-
         sleepiest_guard = most_slept(list(guards.values()))
         print("Sleepiest guard: " + str(sleepiest_guard))
         print("His sleepiest minute: " +
               str(sleepiest_guard.sleepiest_minute()))
 
-        print("Guard most frequently asleep on the same minute: ...")
+        most_regular = list(guards.values())[0]
+        print(str(most_regular.most_freq()))
+
+        for guard in list(guards.values())[1:]:
+            g1 = most_regular.most_freq()
+            g2 = guard.most_freq()
+            if g1[0] < g2[0]:
+                most_regular = guard
+
+        print("Guard most frequently asleep on the same minute: " +
+              str(most_regular) + " " + str(most_regular.most_freq()))
 
         f.close()
 
