@@ -1,20 +1,29 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class AlchemicalReduction {
 
-    public int partOne() {
+    private String units;
+
+    public AlchemicalReduction() {
+        this.units = "";
+
         String workingDir = System.getProperty("user.dir");
         File file = new File(workingDir + "/2018/05/units.txt");
 
-        int answer = -1;
         try (Scanner scanner = new Scanner(file)) {
-            answer = removeReactions(scanner.nextLine()).length();
+            units = scanner.nextLine();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return answer;
+    }
+
+    public int partOne() {
+        return removeReactions(units).length();
     }
 
     private String removeReactions(String units) {
@@ -56,5 +65,24 @@ public class AlchemicalReduction {
         }
 
         return willReact;
+    }
+
+    public int partTwo() {
+        String[] unitTypes = {"a","b","c","d","e","f","g","h","i","j","k","l",
+                "m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
+
+        List<Integer> lengths = new ArrayList<>();
+        for (String unitType : unitTypes) {
+            lengths.add(removeReactions(removeUnit(units, unitType)).length());
+        }
+
+        return Collections.min(lengths);
+    }
+
+
+
+    private String removeUnit(String units, String unit) {
+        return units.replace(unit.toLowerCase(), "")
+                    .replace(unit.toUpperCase(), "");
     }
 }
