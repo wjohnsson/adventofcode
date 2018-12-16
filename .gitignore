@@ -1,3 +1,5 @@
 .idea/
 .metadata/
 *.pyc
+compiler_output/*
+
