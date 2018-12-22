@@ -12,7 +12,7 @@ public class Step {
         this.label = label;
 
         // Time to complete step is position in alphabet + 60 seconds.
-        this.time = (int) ((char) label) - 64 + 0;
+        this.time = (int) ((char) label) - 64 + 60;
 
         this.edges = new ArrayList<>();
         this.prereqs = 0;

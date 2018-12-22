@@ -7,16 +7,18 @@ public class Main {
     }
 
     private static void partTwo(InstructionsReader ir) {
-        System.out.print(ir.timeToCompletion(1));
+        System.out.print(ir.timeToCompletion(5));
     }
 
     public static void main(String[] args) {
         InstructionsReader ir = InstructionsReader.
-                parseInput("test.txt");
+                parseInput("instructions.txt");
 
         System.out.println("Answer part one: ");
         partOne(ir);
 
+        // You shouldn't need to create a new instance of InstructionReader
+        // after running part two...
         InstructionsReader ir2 = InstructionsReader.
                 parseInput("instructions.txt");
         System.out.println("\nAnswer part two: ");
