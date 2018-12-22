@@ -1,14 +1,8 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class InstructionsReader {
-
-    // Step Q must be finished before step O can begin.
-    // Step Z must be finished before step G can begin.
-    // Step W must be finished before step V can begin.
-    // Step C must be finished before step X can begin.
-    // Step O must be finished before step E can begin.
-    // Step K must be finished before step N can begin.
-    // Step P must be finished before step I can begin.
 
     private Map<Character, Step> steps;
 
@@ -61,6 +55,71 @@ public class InstructionsReader {
         }
 
         return noPrereqs;
+    }
+
+    public int timeToCompletion(int helperCount) {
+        Queue<Step> stepQueue = new PriorityQueue<>(new StepComparator());
+        int stepsDone = 0;
+        int totalTime = 0;
+
+        List<Worker> workers = new ArrayList<>();
+        for (int i = 0; i < helperCount + 1; i++) {
+            workers.add(new Worker());
+        }
+
+        for (Step s : noPrereqs()) {
+            stepQueue.add(s);
+        }
+
+        while (stepsDone < steps.size()) {
+            for (Worker w : workers) {
+                // Check if there is work available.
+                if (!w.isWorking() && !stepQueue.isEmpty()) {
+                    w.assignWork(stepQueue.poll());
+                }
+
+                if (w.isWorking()) {
+                    w.updateTime();
+                }
+            }
+
+            // Check which workers completed a step this second.
+            for (Worker w : workers) {
+                if (w.jobsDone) {
+                    stepsDone++;
+                    for (Step s : w.getCurrentStep().getEdges()) {
+                        s.prereqs--;
+
+                        if (s.prereqs == 0) {
+                            stepQueue.add(s);
+                        }
+                    }
+
+                    w.jobsDone = false;
+                }
+            }
+
+            totalTime++;
+        }
+
+        return totalTime;
+    }
+
+    public static InstructionsReader parseInput(String filename) {
+        InstructionsReader ir = new InstructionsReader();
+        String workingDir = System.getProperty("user.dir");
+
+        try (Scanner reader = new Scanner(new File(workingDir + "/2018/07/"
+                + filename))) {
+            while (reader.hasNextLine()) {
+                String[] input = reader.nextLine().split(" ");
+                ir.addInstruction(input[1].charAt(0), input[7].charAt(0));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return ir;
     }
 
 }
