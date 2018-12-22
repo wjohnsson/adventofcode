@@ -3,12 +3,12 @@ public class Worker {
     private int timeLeft;
     private Step currentStep;
     // Work work!
-    public boolean jobsDone;
+    public boolean workDone;
 
     public Worker() {
         timeLeft = 0;
         currentStep = null;
-        jobsDone = false;
+        workDone = false;
     }
 
     public void assignWork(Step s) {
@@ -20,8 +20,12 @@ public class Worker {
         timeLeft--;
 
         if (timeLeft == 0) {
-            jobsDone = true;
+            workDone = true;
         }
+    }
+
+    public boolean isWorkDone() {
+        return workDone;
     }
 
     public boolean isWorking() {

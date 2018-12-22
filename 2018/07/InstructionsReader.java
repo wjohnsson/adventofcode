@@ -85,7 +85,7 @@ public class InstructionsReader {
 
             // Check which workers completed a step this second.
             for (Worker w : workers) {
-                if (w.jobsDone) {
+                if (w.workDone) {
                     stepsDone++;
                     for (Step s : w.getCurrentStep().getEdges()) {
                         s.prereqs--;
@@ -95,7 +95,7 @@ public class InstructionsReader {
                         }
                     }
 
-                    w.jobsDone = false;
+                    w.workDone = false;
                 }
             }
 
