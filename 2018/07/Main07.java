@@ -1,4 +1,4 @@
-public class Main {
+public class Main07 {
 
     private static void partOne(InstructionsReader ir) {
         for (Step s : ir.stepOrder()) {

@@ -2,4 +2,5 @@
 .metadata/
 *.pyc
 compiler_output/*
+*.class
 
