@@ -24,14 +24,66 @@ public class ChronalCoordinates {
     }
 
     public static int sizeOfLargestNonInfiniteArea(List<Point> points) {
-        if (points.size() <= 5) {
+        if (points.size() < 5) {
             return -1;
         }
-
         Point[][] closestPoints = closestPoints(points, boundingBox(points));
-        printPointMatrix(points, closestPoints);
+        return largestArea(removeEdgePoints(closestPoints));
+    }
 
-        return 0;
+    private static Point[][] removeEdgePoints(Point[][] closestPoints) {
+        Point[][] removed = new Point[closestPoints.length][closestPoints[0].length];
+
+        Set<Point> edgePoints = new HashSet<>();
+
+        // Check top and bottom row.
+        for (int x = 0; x < closestPoints.length; x++) {
+            edgePoints.add(closestPoints[x][0]);
+            edgePoints.add(closestPoints[x][closestPoints[0].length - 1]);
+        }
+
+        // Check edge columns.
+        for (int y = 0; y < closestPoints[0].length; y++) {
+            edgePoints.add(closestPoints[0][y]);
+            edgePoints.add(closestPoints[closestPoints.length - 1][y]);
+        }
+
+        // Remove edge points.
+        for (int y = 0; y < closestPoints[0].length; y++) {
+            for (int x = 0; x < closestPoints.length; x++) {
+                if (edgePoints.contains(closestPoints[x][y])) {
+                    removed[x][y] = null;
+                } else {
+                    removed[x][y] = closestPoints[x][y];
+                }
+            }
+        }
+
+        return removed;
+    }
+
+    private static int largestArea(Point[][] pointMatrix) {
+        Map<Point, Integer> pointCount = new HashMap<>();
+        for (int y = 0; y < pointMatrix[0].length; y++) {
+            for (int x = 0; x < pointMatrix.length; x++) {
+                Point p = pointMatrix[x][y];
+                if (!pointCount.containsKey(p)) {
+                    pointCount.put(p, 0);
+                }
+                int i = pointCount.get(p) + 1;
+                pointCount.put(p, i);
+            }
+        }
+
+        int largest = Integer.MIN_VALUE;
+        for (Map.Entry e : pointCount.entrySet()) {
+            int i = (int) e.getValue();
+            if (e.getKey() != null && i > largest) {
+                largest = i;
+            }
+        }
+
+        return largest;
     }
 
     private static Point[][] closestPoints(List<Point> points, Rectangle bounds) {
@@ -43,8 +95,7 @@ public class ChronalCoordinates {
                 int shortestManhattanDist = Integer.MAX_VALUE;
 
                 for (Point p : points) {
-                    Point src = new Point(p.x + bounds.x, p.y + bounds.y);
-                    int md = manHattanDistance(src, dest);
+                    int md = manHattanDistance(p, dest);
 
                     if (md == shortestManhattanDist) {
                         closestPoints[x][y] = null;
@@ -103,10 +154,9 @@ public class ChronalCoordinates {
             pointCharacterMap.put(points.get(i), alphabet.charAt(i));
         }
 
-        System.out.println("Length of pointCharacterMap: " + pointCharacterMap.size());
-        for (int row = 0; row < closestPoints.length; row++) {
-            for (int col = 0; col < closestPoints[row].length; col++) {
-                Point p = closestPoints[row][col];
+        for (int y = 0; y < closestPoints[0].length; y++) {
+            for (int x = 0; x < closestPoints.length; x++) {
+                Point p = closestPoints[x][y];
 
                 char c = '.';
                 if (p != null) {
@@ -118,5 +168,51 @@ public class ChronalCoordinates {
             System.out.println();
         }
         System.out.println();
+    }
+
+    private static void printDistanceMatrix(int[][] totalDistanceMatrix) {
+        for (int y = 0; y < totalDistanceMatrix[0].length; y++) {
+            for (int x = 0; x < totalDistanceMatrix.length; x++) {
+                System.out.print(totalDistanceMatrix[x][y] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static int[][] totalDistanceMatrix(List<Point> points) {
+        Rectangle bb = boundingBox(points);
+        int[][] totalDistanceMatrix = new int[bb.height][bb.width];
+
+        for (int y = 0; y < totalDistanceMatrix[0].length; y++) {
+            for (int x = 0; x < totalDistanceMatrix.length; x++) {
+                Point dest = new Point(x + bb.x, y + bb.y);
+                int totalDistance = 0;
+
+                for (Point p : points) {
+                    totalDistance += manHattanDistance(p, dest);
+                }
+
+                totalDistanceMatrix[x][y] = totalDistance;
+            }
+        }
+
+        printDistanceMatrix(totalDistanceMatrix);
+        return totalDistanceMatrix;
+    }
+
+    public static int sizeOfRegionWithMaxTotalDistance(int[][] totalDistanceMatrix, int maxDistance) {
+        // Use a Point matrix in order to reuse function from part one.
+        Point[][] pointMatrix = new Point[totalDistanceMatrix.length][totalDistanceMatrix[0].length];
+
+        Point p = new Point(0,0);
+        for (int y = 0; y < pointMatrix[0].length; y++) {
+            for (int x = 0; x < pointMatrix.length; x++) {
+                if (totalDistanceMatrix[x][y] < maxDistance) {
+                    pointMatrix[x][y] = p;
+                }
+            }
+        }
+
+        return largestArea(pointMatrix);
     }
 }
