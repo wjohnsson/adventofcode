@@ -48,11 +48,11 @@ public class MemoryManeuver {
         return metadataSum;
     }
 
-
-
     public static void main(String[] args) {
         Queue<Integer> nums = numQueue("license.txt");
 
-        System.out.println("Answer part one: " + metadataSum(createTree(nums)));
+        Node root = createTree(nums);
+        System.out.println("Answer part one: " + metadataSum(root));
+        System.out.println("Answer part two: " + root.getValue());
     }
 }
