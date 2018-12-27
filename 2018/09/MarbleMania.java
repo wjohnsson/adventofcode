@@ -1,8 +1,21 @@
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MarbleMania {
+
+    static class Marble {
+
+        public Long value;
+        public Marble next;
+        public Marble prev;
+
+        public Marble(Long value, Marble next, Marble prev) {
+            this.value = value;
+            this.next = next;
+            this.prev = prev;
+        }
+
+    }
 
     static Map<Integer, Long> initElfScores(int elfCount) {
         Map<Integer, Long> elfScores = new HashMap<>();
@@ -25,6 +38,7 @@ public class MarbleMania {
 
         for (int m = 1; m <= lastMarble; m++) {
             int elf = m % players;
+
             if (m % 23 == 0) {
                 // Remove the marble 7 steps counter-clockwise from the
                 // currentMarble.
