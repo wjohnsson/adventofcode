@@ -4,24 +4,24 @@ import java.util.Map;
 
 public class MarbleMania {
 
-    static Map<Integer, Integer> initElfScores(int elfCount) {
-        Map<Integer, Integer> elfScores = new HashMap<>();
+    static Map<Integer, Long> initElfScores(int elfCount) {
+        Map<Integer, Long> elfScores = new HashMap<>();
         for (int i = 0; i < elfCount; i++) {
-            elfScores.put(i, 0);
+            elfScores.put(i, 0L);
         }
         return elfScores;
     }
 
     static Marble firstMarble() {
-        Marble first = new Marble(0, null, null);
+        Marble first = new Marble(0L, null, null);
         first.next = first;
         first.prev = first;
         return first;
     }
 
-    static int marbleGameHighScore(int players, int lastMarble) {
+    static Long marbleGameHighScore(int players, int lastMarble) {
         Marble currentMarble = firstMarble();
-        Map<Integer, Integer> elfScores = initElfScores(players);
+        Map<Integer, Long> elfScores = initElfScores(players);
 
         for (int m = 1; m <= lastMarble; m++) {
             int elf = m % players;
@@ -35,14 +35,14 @@ public class MarbleMania {
                 currentMarble.next.prev = currentMarble.prev;
 
                 // Update score.
-                int currentScore = elfScores.get(elf);
-                int scored = currentMarble.value + m;
+                Long currentScore = elfScores.get(elf);
+                Long scored = currentMarble.value + m;
                 elfScores.put(elf, currentScore + scored);
 
                 currentMarble = currentMarble.next;
             } else {
                 // Insert the new marble into the list.
-                Marble nextMarble = new Marble(m, currentMarble.next.next, currentMarble.next);
+                Marble nextMarble = new Marble(new Long(m), currentMarble.next.next, currentMarble.next);
                 nextMarble.prev.next = nextMarble;
                 nextMarble.next.prev = nextMarble;
                 currentMarble = nextMarble;
@@ -51,10 +51,17 @@ public class MarbleMania {
             elf++;
         }
 
-        return Collections.max(elfScores.values());
+        Long maxScore = 0L;
+        for (Long score : elfScores.values()) {
+            if (score > maxScore) {
+                maxScore = score;
+            }
+        }
+        return maxScore;
     }
 
     public static void main(String[] args) {
         System.out.println("Answer part one: " + marbleGameHighScore(410, 72059));
+        System.out.println("Answer part two: " + marbleGameHighScore(410, 72059 * 100));
     }
 }
