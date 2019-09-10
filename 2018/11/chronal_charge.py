@@ -1,34 +1,52 @@
 # puzzle input
 SERIAL_NUMBER = 2694
 
-class FuelCell:
 
-    def __init__(self, x, y, serial_number):
-        self.x = x
-        self.y = y
-        self.serial_number = serial_number
-        self.power_level()
-
-    def power_level(self):
-        """Calculate the power level of a fuel cell."""
-        rack_id = self.x + 10
-        self.power_level = rack_id * self.y
-        self.power_level += self.serial_number
-        self.power_level *= rack_id
-        self.power_level = (self.power_level // 100) % 10
-        self.power_level -= 5
-
-    def __str__(self):
-        return str(self.x) + "," + str(self.y) + ", serial number " + str(self.serial_number) + ": power level " + str(self.power_level) + "."
+def power_level(x, y, serial_number):
+    """Calculate the power level of a fuel cell with the given coordinates."""
+    rack_id = x + 10
+    power_level = rack_id * y
+    power_level += serial_number
+    power_level *= rack_id
+    power_level = (power_level // 100) % 10
+    return power_level - 5
 
 
-def largest_power_square():
+def largest_power_square_coord(width, height, serial_number):
     """Returns the X,Y coordinate of the top-left fuel cell of the 3x3 square
-       of the largest power."""
-    fc = FuelCell(0, 0, SERIAL_NUMBER)
-    return fc
+       with the largest power."""
+    grid = []
+    for x in range(0, width + 1):
+        row = []
+        for y in range(0, height + 1):
+            row.append(power_level(x, y, serial_number))
+        grid.append(row)
 
-# Testing
-print(FuelCell(122, 79, 57))
-print(FuelCell(217, 196, 39))
-print(FuelCell(101, 153, 71))
+    # Brute force
+    largest_total = 0
+    coord_of_largest = [0, 0]  # [x, y]
+
+    for x in range(0, width - 2):
+        for y in range(0, height - 2):
+            # Find total power of 3x3 square
+            total_power = 0
+            for i in range(0, 3):
+                for j in range(0, 3):
+                    total_power += grid[x + i][y + j]
+
+            if total_power > largest_total:
+                # New largest total power found
+                largest_total = total_power
+                coord_of_largest[0] = x
+                coord_of_largest[1] = y
+
+    print(str(largest_total))
+    return coord_of_largest
+
+
+# Tests
+print(largest_power_square_coord(300, 300, 18))
+print(largest_power_square_coord(300, 300, 42))
+
+# part one
+print(largest_power_square_coord(300, 300, SERIAL_NUMBER))
