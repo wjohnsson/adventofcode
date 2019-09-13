@@ -25,56 +25,34 @@ def create_grid(serial_number=SERIAL_NUMBER):
     return grid
 
 
-def largest_3x3_power(grid, width=300, height=300):
-    """Find the 3x3 square with the largest power and return it's x,y
-       coordinates."""
-    # Brute force
-    largest_total = 0
-    coord_of_largest = [0, 0]  # [x, y]
-
-    for x in range(0, width - 2):
-        for y in range(0, height - 2):
-            # Find total power of 3x3 square
-            total_power = 0
-            for i in range(0, 3):
-                for j in range(0, 3):
-                    total_power += grid[x + i][y + j]
-
-            if total_power > largest_total:
-                # New largest total power found
-                largest_total = total_power
-                coord_of_largest[0] = x
-                coord_of_largest[1] = y
-
-    return coord_of_largest
-
-
-def largest_power_square(grid, starting_sq_size=3):
-    """Find the (size x size)-grid with the largest power in the grid and
+def largest_power_square(grid, sq_size):
+    """Find the (sq_size x sq_size)-square with the largest power in the grid and
     return the x,y coordinate of the top-left fuel cell of that square."""
-    # Brute force
-    largest_power = 0
-    coord_of_largest = (None, None, None)  # (x, y, sq_size)
+    # (x, y, square size, largest power)
+    largest = (None, None, None, 0)
 
-    for sq_size in range(1, len(grid)):
-        print("sq_size: " + str(sq_size), end=" ")
-        for x in range(0, len(grid) - sq_size):
-            for y in range(0, len(grid) - sq_size):
-                sq_power = sum(grid[x_][y_]
-                               for x_ in range(x, x+sq_size)
-                               for y_ in range(y, y + sq_size))
-                if sq_power > largest_power:
-                    largest_power = sq_power
-                    coord_of_largest = (x, y, sq_size)
-        print(coord_of_largest)
+    for x in range(0, len(grid) - sq_size):
+        for y in range(0, len(grid) - sq_size):
+            sq_power = sum(grid[x_][y_]
+                           for x_ in range(x, x+sq_size)
+                           for y_ in range(y, y + sq_size))
+            if sq_power > largest[3]:
+                largest = (x, y, sq_size, sq_power)
 
-    return coord_of_largest
+    return largest
 
 
 grid = create_grid()
 
 # part one
-print(largest_3x3_power(grid))
+result = largest_power_square(grid, 3)
+print(str(result[0]) + "," + str(result[1]) + "\n\n")
 
 # part two
-print(largest_power_square(grid, 1))
+# Brute force O(n^5)
+result = (None, None, None, 0)
+for sq_size in range(3, len(grid)):
+    print(result)
+    temp = largest_power_square(grid, sq_size)
+    if result[3] < temp[3]:
+        result = temp
