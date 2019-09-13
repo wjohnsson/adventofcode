@@ -13,6 +13,18 @@ def power_level(x, y, serial_number):
     return power_level - 5
 
 
+def create_grid(serial_number=SERIAL_NUMBER):
+    """Calculate power level for all coordinates and return a 2 dimensional
+       list representing the grid."""
+    grid = []
+    for x in range(0, 300 + 1):
+        row = []
+        for y in range(0, 300 + 1):
+            row.append(power_level(x, y, serial_number))
+        grid.append(row)
+    return grid
+
+
 def largest_3x3_power(grid, width=300, height=300):
     """Find the 3x3 square with the largest power and return it's x,y
        coordinates."""
@@ -37,50 +49,26 @@ def largest_3x3_power(grid, width=300, height=300):
     return coord_of_largest
 
 
-def largest_power_square(grid, starting_grid_size=3):
+def largest_power_square(grid, starting_sq_size=3):
     """Find the (size x size)-grid with the largest power in the grid and
     return the x,y coordinate of the top-left fuel cell of that square."""
     # Brute force
-    largest_total = 0
-    coord_of_largest = [0, 0, 0]  # [x, y, grid_size]
+    largest_power = 0
+    coord_of_largest = (None, None, None)  # (x, y, sq_size)
 
-    for grid_size in range(starting_grid_size, 301):
-        for x in range(0, 301 - grid_size):
-            for y in range(0, 301 - grid_size):
-                # Find total power of (size x size) square
-                total_power = 0
-                for i in range(0, grid_size):
-                    for j in range(0, grid_size):
-                        total_power += grid[x + i][y + j]
-
-                        if total_power > largest_total:
-                            # New largest total power found
-                            largest_total = total_power
-                            coord_of_largest[0] = x
-                            coord_of_largest[1] = y
-                            coord_of_largest[2] = grid_size
-
-        # For debugging
-        print("Testing grid size: " + str(grid_size) +
-              ". Current largest total power found: " +
-              str(largest_total) + ". at " +
-              str(coord_of_largest[:2]) +
-              " with grid size " +
-              str(coord_of_largest[2]))
+    for sq_size in range(1, len(grid)):
+        print("sq_size: " + str(sq_size), end=" ")
+        for x in range(0, len(grid) - sq_size):
+            for y in range(0, len(grid) - sq_size):
+                sq_power = sum(grid[x_][y_]
+                               for x_ in range(x, x+sq_size)
+                               for y_ in range(y, y + sq_size))
+                if sq_power > largest_power:
+                    largest_power = sq_power
+                    coord_of_largest = (x, y, sq_size)
+        print(coord_of_largest)
 
     return coord_of_largest
-
-
-def create_grid(serial_number=SERIAL_NUMBER):
-    """Calculate power level for all coordinates and return a 2 dimensional
-       list representing the grid."""
-    grid = []
-    for x in range(0, 300 + 1):
-        row = []
-        for y in range(0, 300 + 1):
-            row.append(power_level(x, y, serial_number))
-        grid.append(row)
-    return grid
 
 
 grid = create_grid()
@@ -88,11 +76,5 @@ grid = create_grid()
 # part one
 print(largest_3x3_power(grid))
 
-# part two test
-test_grid1 = create_grid(serial_number=18)
-test_grid2 = create_grid(serial_number=42)
-print(largest_power_square(test_grid1, starting_grid_size=16))
-print(largest_power_square(test_grid2))
-
-print(largest_power_square(grid))
-print(largest_power_square(grid))
+# part two
+print(largest_power_square(grid, 1))
