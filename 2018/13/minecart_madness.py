@@ -40,31 +40,6 @@ def turn_cart():
         cart.turn()
 
 
-def test_rotations():
-    """A cart named jimmy going through some tests"""
-    jimmy = Cart(0, 0, "^")
-    jimmy.left()
-    assert jimmy.dir == "<"
-    jimmy.right()
-    assert jimmy.dir == "^"
-    jimmy.right()
-    assert jimmy.dir == ">"
-    jimmy.right()
-    assert jimmy.dir == "v"
-
-    sophie = copy.deepcopy(jimmy)
-    jimmy.turn()  # should turn left
-    sophie.left()
-    assert jimmy.dir == sophie.dir
-    jimmy.turn()  # should not turn
-    assert jimmy.dir == sophie.dir
-    jimmy.turn()  # should turn right
-    sophie.right()
-    assert jimmy.dir == sophie.dir
-
-
-test_rotations()
-
 tick = 0
 while True:
     list.sort(carts)  # top most cart moves first

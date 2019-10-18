@@ -60,7 +60,7 @@ class Cart:
         self.dir = next(self.dir_cycle)
 
     def __repr__(self):
-        return str(self.dir) + " (" + str(self.x) + "," + str(self.y) + ")"
+        return "'" + str(self.dir) + "', (" + str(self.x) + "," + str(self.y) + ")"
 
     def __lt__(self, other):
         if self.y == other.y:
