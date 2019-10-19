@@ -5,6 +5,10 @@ import os
 
 
 class TestMinecartMadness(unittest.TestCase):
+    """
+    Tests on adventofcode 2018 day 13, used to learn testing in Python
+    """
+
     def test_cart_left_right_rotations(self):
         """
         Tests if rotating carts left and right works as intended
@@ -12,19 +16,24 @@ class TestMinecartMadness(unittest.TestCase):
         cart1 = Cart(0, 0, "^")
         cart1.left()
         self.assertEqual(cart1.dir, "<",
-                         "Turning the cart: (" + str(cart1) + ") left should make it face left")
+                         "Turning the cart: (" + str(cart1) + ")" +
+                         " left should make it face left")
         cart1.right()
         self.assertEqual(cart1.dir, "^",
-                         "Turning the cart: (" + str(cart1) + ") right should make it face up")
+                         "Turning the cart: (" + str(cart1) + ")" +
+                         " right should make it face up")
         cart1.right()
         self.assertEqual(cart1.dir, ">",
-                         "Turning the cart: (" + str(cart1) + ") right should make it face right")
+                         "Turning the cart: (" + str(cart1) + ")" +
+                         " right should make it face right")
         cart1.right()
         self.assertEqual(cart1.dir, "v",
-                         "Turning the cart: (" + str(cart1) + ") right should make it face down")
+                         "Turning the cart: (" + str(cart1) + ")" +
+                         " right should make it face down")
         cart1.left()
         self.assertEqual(cart1.dir, ">",
-                         "Turning the cart: (" + str(cart1) + ") right should make it face right")
+                         "Turning the cart: (" + str(cart1) + ")" +
+                         " left should make it face right")
 
     def test_cart_intersection_behavior(self):
         """
@@ -40,22 +49,27 @@ class TestMinecartMadness(unittest.TestCase):
         cart1 = Cart(0, 0, "v")
         cart1.turn()
         self.assertEqual(cart1.dir, ">",
-                         "Cart should turn left the first time it reaches an intersection")
+                         "Cart should turn left the first time it reaches an" +
+                         " intersection")
 
         prev_dir = cart1.dir
         cart1.turn()
         self.assertEqual(cart1.dir, prev_dir,
-                         "Cart should not turn at all the second time it reaches an intersection")
+                         "Cart should not turn at all the second time it" +
+                         " reaches an intersection")
 
         cart1.turn()
         self.assertEqual(cart1.dir, "v",
-                         "Cart should turn right the third time it reaches an intersection")
+                         "Cart should turn right the third time it reaches" +
+                         " an intersection")
         cart1.turn()
         self.assertEqual(cart1.dir, ">",
-                         "Cart should turn left the fourth time it reaches an intersection")
+                         "Cart should turn left the fourth time it reaches" +
+                         " an intersection")
         cart1.turn()
         self.assertEqual(cart1.dir, ">",
-                         "Cart should not turn at all the fifth time it reaches an intersection")
+                         "Cart should not turn at all the fifth time it" +
+                         " reaches an intersection")
         # etc...
 
         #    +---
@@ -83,25 +97,45 @@ class TestMinecartMadness(unittest.TestCase):
         Tests a simple vertical track to see where the first crash occurs
         """
         # Vertical straight track
-        #   0          0           0
-        # 0 |          |           |
-        # 1 v          |           |
-        # 2 |          v           |
-        # 3 |  tick -> |  tick ->  X
-        # 4 |          ^           |
-        # 5 ^          |           |
-        # 6 |          |           |
         #
-        # should return (0,3)
+        #   0   0   0
+        # 0 |   |   |
+        # 1 v   |   |
+        # 2 |   v   |
+        # 3 |   |   X
+        # 4 |   ^   |
+        # 5 ^   |   |
+        # 6 |   |   |
+        #
+        # Bottom cart will detect the collision
 
         dirname = os.path.dirname(__file__)
         file_path = os.path.join(dirname, "test_straight_vertical_track")
         with open(file_path) as f:
             test_lines = f.readlines()
             tick, pos = minecart_madness.first_crash(test_lines)
-            self.assertEqual(pos, (0, 2),
+            self.assertEqual(pos, (0, 3),
                              "Moving topmost cart first every tick should" +
                              " result in a crash at (0,3)")
+            # maybe also assert which cart moved last to cause the crash?
+
+    def test_horizontal_straight_track(self):
+        # Horizontal straight track
+        #
+        #   01234567     01234567    01234567    01234567    01234567
+        # 0 >------<   0 ->----<-  0 -->--<--  0 ---><---  0 ----X---
+        #
+        # Left cart detects the collision first
+
+        dirname = os.path.dirname(__file__)
+        file_path = os.path.join(dirname, "test_straight_horizontal_track")
+        with open(file_path) as f:
+            test_lines = f.readlines()
+            tick, pos = minecart_madness.first_crash(test_lines)
+            self.assertEqual(pos, (4, 0),
+                             "Moving leftmost cart first every tick should" +
+                             " result in a crash at (4,0)")
+            # maybe also assert which cart moved last to cause the crash?
 
 
 if __name__ == '__main__':
