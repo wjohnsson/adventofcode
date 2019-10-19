@@ -113,7 +113,7 @@ class TestMinecartMadness(unittest.TestCase):
         file_path = os.path.join(dirname, "test_straight_vertical_track")
         with open(file_path) as f:
             test_lines = f.readlines()
-            tick, pos = minecart_madness.first_crash(test_lines)
+            pos = minecart_madness.first_crash(test_lines)
             self.assertEqual(pos, (0, 3),
                              "Moving topmost cart first every tick should" +
                              " result in a crash at (0,3)")
@@ -131,7 +131,7 @@ class TestMinecartMadness(unittest.TestCase):
         file_path = os.path.join(dirname, "test_straight_horizontal_track")
         with open(file_path) as f:
             test_lines = f.readlines()
-            tick, pos = minecart_madness.first_crash(test_lines)
+            pos = minecart_madness.first_crash(test_lines)
             self.assertEqual(pos, (4, 0),
                              "Moving leftmost cart first every tick should" +
                              " result in a crash at (4,0)")

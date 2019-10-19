@@ -1,3 +1,6 @@
+# minecart_madness.py
+# solution to https://adventofcode.com/2018/day/13
+
 import os
 from cart import Cart
 from cart import cart_symbols
@@ -68,35 +71,37 @@ def print_state(tracks, carts):
         print()  # newline
 
 
+def collision(carts):
+    positions = set()
+    set_length = 0
+    for cart in carts:
+        set_length = len(positions)
+        positions.add((cart.x, cart.y))
+        if len(positions) == set_length:
+            # If we add something to the set, but the length didn't change, we
+            # know there's a collision
+            return True
+    return False
+
+
 def first_crash(input_file_lines):
     """Returns solution to part one, the location of the first crash"""
     tracks, carts = create_map(input_file_lines)
 
-    tick = 0  # used for debugging
     while True:
         list.sort(carts)  # let top most cart move first
-        positions = set()
-
-        # Debugging
-        print_state(tracks, carts)
-        print()
 
         for cart in carts:
             cart.move()
 
-            len_before = len(positions)
-            pos = (cart.x, cart.y)
-            positions.add(pos)
-            if len_before == len(positions):
-                return tick, pos
+            if collision(carts):
+                return (cart.x, cart.y)
 
             turn_cart(tracks, cart)
-
-        tick += 1
 
 
 def answer_part_one():
     dirname = os.path.dirname(__file__)
     file_path = os.path.join(dirname, "input_track")
-    print("Crash at " +
+    print("First crash at " +
           str(first_crash(open(file_path).readlines())))
