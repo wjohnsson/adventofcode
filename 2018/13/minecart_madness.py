@@ -25,8 +25,13 @@ def create_map(input_file_lines):
 
 
 def turn_cart(tracks, cart):
-    """Turns a cart if it is now standing on a curve or intersection"""
-    track = tracks[cart.y][cart.x]
+    """Turns a cart if it is standing on a curve or intersection"""
+    try:
+        # If the tracks aren't fully connected, a cart might derail
+        track = tracks[cart.y][cart.x]
+    except IndexError:
+        print("Cart " + str(cart) + " derailed!")
+        raise
 
     if track == "\\":
         if cart.dir in "^v":
@@ -44,14 +49,38 @@ def turn_cart(tracks, cart):
         cart.turn()
 
 
+def print_state(tracks, carts):
+    """
+    Print tracks and location of carts for visualizing or debugging smaller
+    maps
+    """
+    cart_dict = dict()
+    for cart in carts:
+        cart_dict[(cart.x, cart.y)] = cart
+
+    for y in range(len(tracks)):
+        for x, track in enumerate(tracks[y]):
+            try:
+                cart = cart_dict[(x, y)]
+                print(cart.dir, end="")
+            except KeyError:
+                print(track, end="")
+        print()  # newline
+
+
 def first_crash(input_file_lines):
-    """ Returns solution to part one, the location of the first crash """
+    """Returns solution to part one, the location of the first crash"""
     tracks, carts = create_map(input_file_lines)
 
     tick = 0  # used for debugging
     while True:
         list.sort(carts)  # let top most cart move first
         positions = set()
+
+        # Debugging
+        print_state(tracks, carts)
+        print()
+
         for cart in carts:
             cart.move()
 
@@ -70,4 +99,4 @@ def answer_part_one():
     dirname = os.path.dirname(__file__)
     file_path = os.path.join(dirname, "input_track")
     print("Crash at " +
-        str(first_crash(open(file_path).readlines())))
+          str(first_crash(open(file_path).readlines())))
