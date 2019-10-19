@@ -40,7 +40,7 @@ def turn_cart(tracks, cart):
 
 def first_crash(input_file_lines):
     """Prints solution to part one, the location of the first crash"""
-    carts, tracks = create_map(input_file_lines)
+    tracks, carts = create_map(input_file_lines)
 
     tick = 0  # used for debugging
     while True:
@@ -53,10 +53,7 @@ def first_crash(input_file_lines):
             pos = (cart.x, cart.y)
             positions.add(pos)
             if len_before == len(positions):
-                print("####### CART CRASH REPORT ######")
-                print("tick: " + str(tick + 1))
-                print("crash at: " + str(pos))
-                exit()
+                return tick, pos
 
             turn_cart(tracks, cart)
 
@@ -64,6 +61,7 @@ def first_crash(input_file_lines):
 
 
 # part one
-dirname = os.path.dirname(__file__)
-file_path = os.path.join(dirname, "test_small_track")
-first_crash(open(file_path).readlines())
+# dirname = os.path.dirname(__file__)
+# file_path = os.path.join(dirname, "test_small_track")
+# print("Crash at " +
+#       str(first_crash(open(file_path).readlines())))

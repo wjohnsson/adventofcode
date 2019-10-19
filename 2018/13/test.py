@@ -1,5 +1,7 @@
 from cart import Cart
+import minecart_madness
 import unittest
+import os
 
 
 class TestMinecartMadness(unittest.TestCase):
@@ -75,3 +77,32 @@ class TestMinecartMadness(unittest.TestCase):
         cart2.turn()
         self.assertEqual(cart2.dir, ">",
                          "Cart should turn right the third time it reaches an intersection")
+
+    def test_vertical_straight_track(self):
+        """
+        Tests a simple vertical track to see where the first crash occurs
+        """
+        # Vertical straight track
+        #   0          0           0
+        # 0 |          |           |
+        # 1 v          |           |
+        # 2 |          v           |
+        # 3 |  tick -> |  tick ->  X
+        # 4 |          ^           |
+        # 5 ^          |           |
+        # 6 |          |           |
+        #
+        # should return (0,3)
+
+        dirname = os.path.dirname(__file__)
+        file_path = os.path.join(dirname, "test_straight_vertical_track")
+        with open(file_path) as f:
+            test_lines = f.readlines()
+            tick, pos = minecart_madness.first_crash(test_lines)
+            self.assertEqual(pos, (0, 2),
+                             "Moving topmost cart first every tick should" +
+                             " result in a crash at (0,3)")
+
+
+if __name__ == '__main__':
+    unittest.main()
