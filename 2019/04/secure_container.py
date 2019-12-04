@@ -16,24 +16,21 @@ def is_ascending(num):
     return True
 
 
-def first_criteria(n):
-    while n:
-        prev = n % 10
-        n //= 10
-        curr = n % 10
-
-        if prev == curr:
-            # Two adjacent digits are the same
-            return True
-    return False
+def adjacent_count(num):
+    return list(len(list(g)) for _, g in groupby(str(num)))
 
 
-def second_criteria(n):
-    s = str(n)
-    # If we have a group of length 2 we know there's two adjacent digits
-    return any([len(list(g)) == 2 for _, g in groupby(s)])
+def first_criterion(num):
+    return max(adjacent_count(num)) >= 2
 
 
-print()
-print(len([n for n in range(lower, upper + 1) if is_ascending(n) and first_criteria(n)]))  # 544
-print(len([n for n in range(lower, upper + 1) if is_ascending(n) and second_criteria(n)]))  # 334
+def second_criterion(num):
+    return 2 in adjacent_count(num)
+
+
+# Part 1
+print(sum(1 for p in range(lower, upper + 1) if is_ascending(p)
+          and first_criterion(p)))  # 544
+# Part 2
+print(sum(1 for p in range(lower, upper + 1) if is_ascending(p)
+          and second_criterion(p)))  # 334
