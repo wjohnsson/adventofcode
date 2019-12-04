@@ -1,39 +1,42 @@
 from itertools import repeat
 
-# Quick and dirty solution, lots of brute force and copy paste ¯\_(ツ)_/¯
+# Beware:
+#  Quick and dirty solution, lots of brute force and copy paste ¯\_(ツ)_/¯
 
 input_lines = open("input.txt").readlines()
 
 
-def parse_input(line_no):
-    return [(trace[0], int(trace[1:])) for trace in
-            input_lines[line_no].split(",")]
+def parse_input(wire_no):
+    """Separate direction from length in each segment of the wire"""
+    return [(segment[0], int(segment[1:])) for segment in
+            input_lines[wire_no].split(",")]
 
 
-def visited_points(wire):
-    points = set()
-    # Relative distance from central port
-    x, y = 0, 0
+def visited(wire):
+    """Create a list of points visited by the wire relative to the
+    central port"""
+    v = set()
+    x, y = 0, 0  # Relative distance from central port
     for direction, length in wire:
         if direction == 'U':
-            points.update(zip(repeat(x), range(y + 1, y + length + 1)))
+            v.update(zip(repeat(x), range(y + 1, y + length + 1)))
             y += length
         elif direction == 'D':
-            points.update(zip(repeat(x), range(y - 1, y - length - 1, -1)))
+            v.update(zip(repeat(x), range(y - 1, y - length - 1, -1)))
             y -= length
         elif direction == 'R':
-            points.update(zip(range(x + 1, x + length + 1), repeat(y)))
+            v.update(zip(range(x + 1, x + length + 1), repeat(y)))
             x += length
         elif direction == 'L':
-            points.update(zip(range(x - 1, x - length - 1, -1), repeat(y)))
+            v.update(zip(range(x - 1, x - length - 1, -1), repeat(y)))
             x -= length
-    return points
+    return v
 
 
 def steps_to_intersections(wire, intersections):
+    """Walk along the wire and return the distance to each intersection"""
     steps = dict()
-    # Relative distance from central port
-    x, y = 0, 0
+    x, y = 0, 0  # Relative distance from the central port
     steps_taken = 0
     for direction, length in wire:
         if direction == 'U':
@@ -63,23 +66,16 @@ def steps_to_intersections(wire, intersections):
     return steps
 
 
-def combined_steps(intersections, stepsA, stepsB):
-    combined_steps = []
-    for i in intersections:
-        combined_steps.append(stepsA[i] + stepsB[i])
-    return combined_steps
-
-
 wireA = parse_input(0)
 wireB = parse_input(1)
 
-pointsA = visited_points(wireA)
-pointsB = visited_points(wireB)
+intersections = set.intersection(visited(wireA), visited(wireB))
 
-intersections = set.intersection(pointsA, pointsB)
+# Part 1
 print(min([abs(x) + abs(y) for x, y in intersections]))  # 1431
 
 stepsA = steps_to_intersections(wireA, intersections)
 stepsB = steps_to_intersections(wireB, intersections)
 
-print(min(combined_steps(intersections, stepsA, stepsB)))  # 48012
+# Part 2
+print(min([stepsA[i] + stepsB[i] for i in intersections]))  # 48012
