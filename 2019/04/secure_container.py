@@ -21,7 +21,7 @@ def first_criteria(n):
 
 
 def second_criteria(n):
-    temp = n
+    s = str(n)
     while n:
         prev = n % 10
         n //= 10
@@ -31,9 +31,7 @@ def second_criteria(n):
             return False
 
     # If we have a group of length 2 we know there's two adjacent digits
-    lengths = [len(list(g)) for k, g in groupby(str(temp))]
-    if 2 in lengths:
-        return True
+    return any([len(list(g)) == 2 for _, g in groupby(s)])
 
 
 print(len([n for n in range(lower, upper + 1) if first_criteria(n)]))  # 544
