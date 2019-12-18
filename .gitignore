@@ -3,4 +3,5 @@
 *.pyc
 compiler_output/*
 *.class
+*.vscode
 
