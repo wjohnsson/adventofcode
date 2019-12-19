@@ -20,9 +20,7 @@ def fewest_zeroes(layers):
     fewest = float("inf")
     layer_with_fewest = layers[0]
     for layer in layers:
-        zeroes = 0
-        for row in layer:
-            zeroes += sum([1 for d in row if d == 0])
+        zeroes = sum([row.count(0) for row in layer])
 
         if zeroes < fewest:
             fewest = zeroes
@@ -34,14 +32,8 @@ def checksum(layer):
     """
     Return the number of 1 digits multiplied by the number of 2 digits.
     """
-    ones = 0
-    twos = 0
-    for row in layer:
-        for digit in row:
-            if digit == 1:
-                ones += 1
-            elif digit == 2:
-                twos += 1
+    ones = sum([row.count(1) for row in layer])
+    twos = sum([row.count(2) for row in layer])
     return ones * twos
 
 
@@ -72,9 +64,9 @@ def print_image(image):
         for x in range(len(image[y])):
             color = image[y][x]
             if color == 0:
-                print("■", end="")
+                print("█", end="")
             elif color == 1:
-                print("□", end="")
+                print("░", end="")
         print()
 
 
