@@ -1,46 +1,28 @@
-from intcode_vm import IntcodeVM
+from intcode_vm import run
 from itertools import permutations
 
 
-def run_serial_amps(code, phases):
-    amps = init_amps(code, phases)
-    signal = 0
-    for amp in amps:
-        amp.next_input(signal)
-        signal = amp.run()
-    return signal
+def run_amps(code, phases):
+    inputs = [[phase] for phase in phases]
+    inputs[0].append(0)
+    amps = [run(code[:], inp) for inp in inputs]
 
-
-def run_feedback_amps(code, phases):
-    amps = init_amps(code, phases)
-    signal = 0
-    halt = False
-    while not halt:
-        for amp in amps:
-            amp.next_input(signal)
+    while True:
+        for i, amp in enumerate(amps):
             try:
-                signal = amp.run()
+                signal = next(amp)
             except StopIteration:
-                halt = True
-    return signal
-
-
-def init_amps(code, phases):
-    amps = [IntcodeVM(code[:])]  # last amp
-    for i in range(4):
-        amps.append(IntcodeVM(intcode[:]))
-    amps.reverse()
-
-    for i, phase in enumerate(phases):
-        amps[i].next_input(phase)
-    return amps
+                return signal
+            inputs[(i + 1) % len(amps)].append(signal)
 
 
 input_line = open("input.txt").readline()
 intcode = [int(n) for n in input_line.split(",")]
 
 # Part 1
-print(max([run_serial_amps(intcode, phases) for phases in permutations(range(0, 5))]))
+print(max([run_amps(intcode, phases)
+           for phases in permutations(range(0, 5))]))  # 914828
 
 # Part 2
-print(max([run_feedback_amps(intcode, phases) for phases in permutations(range(5, 10))]))
+print(max([run_amps(intcode, phases)
+           for phases in permutations(range(5, 10))]))  # 17956613
