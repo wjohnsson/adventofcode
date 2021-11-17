@@ -4,4 +4,4 @@
 compiler_output/*
 *.class
 *.vscode
-
+**/.pytest_cache/*
