@@ -13,5 +13,6 @@ class App
 
         var solution = new SonarSweep();
         Console.WriteLine(solution.PartOne(input));
+        Console.WriteLine(solution.PartTwo(input));
     }
 }

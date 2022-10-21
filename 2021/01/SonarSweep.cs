@@ -2,13 +2,26 @@ namespace AdventOfCode.Y2021.D01;
 
 class SonarSweep : ISolver
 {
-    public object PartOne(string input)
+    public object PartOne(string input) => DepthIncreases(input, 1);
+
+    public object PartTwo(string input) => DepthIncreases(input, 3);
+
+    private static IEnumerable<int> Depths(string input)
     {
-        IEnumerable<int> depths = input.Split('\n').Select(d => Int32.Parse(d));
+        return input.Split('\n').Select(d => int.Parse(d));
+    }
 
-        var increases = depths.Select((a, b) => a < b)
-                              .Count(increased => increased);
+    private static int DepthIncreases(string input, int skip)
+    {
+        var depths = Depths(input);
+        var windowSums = depths.Zip(depths.Skip(skip));
 
-        return increases;
+        int count = 0;
+        foreach (var (a, b) in windowSums)
+        {
+            if (a < b) count++;
+        }
+
+        return count;
     }
 }
