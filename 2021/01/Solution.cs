@@ -1,6 +1,8 @@
+using adventofcode.Lib;
+
 namespace AdventOfCode.Y2021.D01;
 
-class SonarSweep : ISolver
+class Solution : ISolver
 {
     public object PartOne(string input) => DepthIncreases(input, 1);
 
