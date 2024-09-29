@@ -4,7 +4,8 @@ class App
 {
     public static void Main(string[] args)
     {
-        if (args.Length != 1 || args[0].Length != 4)
+        const int maxArguments = 2;
+        if (args.Length < 1 || args.Length > maxArguments || args[0].Length != 4)
         {
             Console.WriteLine("Usage: dotnet run YYDD");
             Console.WriteLine("Example: dotnet run 2101 for year 2021, day 1");
@@ -15,7 +16,8 @@ class App
         string year = "20" + yearDay[..2];
         string day = yearDay[2..];
 
-        string input = File.ReadAllText($"{year}/{day}/input");
+        string inputFilePath = args.Length == 2 && args[1] == "test" ? "test" : "input";
+        string input = File.ReadAllText($"{year}/{day}/{inputFilePath}");
 
         if (input.EndsWith('\n'))
             input = input[..^1];
