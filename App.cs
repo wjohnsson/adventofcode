@@ -16,7 +16,7 @@ class App
         string year = "20" + yearDay[..2];
         string day = yearDay[2..];
 
-        string inputFilePath = args.Length == 2 && args[1] == "test" ? "test" : "input";
+        string inputFilePath = args.Length == 2 && args[1].Length != 0 ? args[1] : "input";
         string input = File.ReadAllText($"{year}/{day}/{inputFilePath}");
 
         if (input.EndsWith('\n'))
