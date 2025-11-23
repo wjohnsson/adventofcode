@@ -1,0 +1,10 @@
+[project]
+name = "adventofcode"
+version = "0.1.0"
+description = "William's solutions to adventofcode"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "networkx>=3.5",
+    "numpy>=2.3.5",
+]
