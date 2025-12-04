@@ -17,17 +17,23 @@ class App
         string day = yearDay[2..];
 
         string inputFilePath = args.Length == 2 && args[1].Length != 0 ? args[1] : "input";
-        string input = File.ReadAllText($"{year}/{day}/{inputFilePath}");
+        string input = File.ReadAllText($"{year}/{day}/{inputFilePath}").TrimEnd();
 
-        if (input.EndsWith('\n'))
-            input = input[..^1];
+        string targetNamespace = $"AdventOfCode.Y{year}.D{day}";
 
-        string className = $"AdventOfCode.Y{year}.D{day}.Solution";
-        Type? solutionType = Type.GetType(className);
+        // Find all types that implement ISolver in the target namespace
+        Type? solutionType = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.GetTypes())
+            .FirstOrDefault(type =>
+                type.Namespace == targetNamespace &&
+                typeof(ISolver).IsAssignableFrom(type) &&
+                !type.IsInterface &&
+                !type.IsAbstract);
 
         if (solutionType == null)
         {
             Console.WriteLine($"Solution class not found for year {year}, day {day}");
+            Console.WriteLine($"(Looking for a class implementing ISolver in namespace {targetNamespace})");
             return;
         }
 
