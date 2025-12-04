@@ -1,50 +1,73 @@
 using adventofcode.Lib;
+using System.CommandLine;
 
 class App
 {
-    public static void Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        const int maxArguments = 2;
-        if (args.Length < 1 || args.Length > maxArguments || args[0].Length != 4)
+        var yearDayArgument = new Argument<string>("yearday")
         {
-            Console.WriteLine("Usage: dotnet run YYDD");
-            Console.WriteLine("Example: dotnet run 2101 for year 2021, day 1");
-            return;
-        }
+            Description = "Year and day in YYDD format (e.g., 2101 for year 2021, day 1)"
+        };
 
-        string yearDay = args[0];
-        string year = "20" + yearDay[..2];
-        string day = yearDay[2..];
-
-        string inputFilePath = args.Length == 2 && args[1].Length != 0 ? args[1] : "input";
-        string input = File.ReadAllText($"{year}/{day}/{inputFilePath}").TrimEnd();
-
-        string targetNamespace = $"AdventOfCode.Y{year}.D{day}";
-
-        // Find all types that implement ISolver in the target namespace
-        Type? solutionType = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .FirstOrDefault(type =>
-                type.Namespace == targetNamespace &&
-                typeof(ISolver).IsAssignableFrom(type) &&
-                !type.IsInterface &&
-                !type.IsAbstract);
-
-        if (solutionType == null)
+        var inputArgument = new Argument<string>("input")
         {
-            Console.WriteLine($"Solution class not found for year {year}, day {day}");
-            Console.WriteLine($"(Looking for a class implementing ISolver in namespace {targetNamespace})");
-            return;
-        }
+            Description = "Path to the input file (optional, defaults to 'input')",
+            DefaultValueFactory = _ => "input",
+            Arity = ArgumentArity.ZeroOrOne
+        };
 
-        if (Activator.CreateInstance(solutionType) is not ISolver solution)
+        var rootCommand = new RootCommand("Advent of Code solution runner");
+        rootCommand.Arguments.Add(yearDayArgument);
+        rootCommand.Arguments.Add(inputArgument);
+
+        rootCommand.SetAction(parseResult =>
         {
-            Console.WriteLine($"Failed to create instance of solution for year {year}, day {day}");
-            return;
-        }
+            string? yearDay = parseResult.GetValue(yearDayArgument);
+            string? inputFilePath = parseResult.GetValue(inputArgument);
 
-        Console.WriteLine($"Solving Advent of Code {year}, Day {day}:");
-        Console.WriteLine($"Part One: {solution.PartOne(input)}");
-        Console.WriteLine($"Part Two: {solution.PartTwo(input)}");
+            if (yearDay == null || yearDay.Length != 4 || !int.TryParse(yearDay, out _))
+            {
+                Console.WriteLine("Error: yearday must be a 4-digit number in YYDD format");
+                Console.WriteLine("Example: 2101 for year 2021, day 1");
+                return 1;
+            }
+
+            string year = "20" + yearDay[..2];
+            string day = yearDay[2..];
+
+            string input = File.ReadAllText($"{year}/{day}/{inputFilePath}").TrimEnd();
+
+            string targetNamespace = $"AdventOfCode.Y{year}.D{day}";
+
+            // Find all types that implement ISolver in the target namespace
+            Type? solutionType = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .FirstOrDefault(type =>
+                    type.Namespace == targetNamespace &&
+                    typeof(ISolver).IsAssignableFrom(type) &&
+                    !type.IsInterface &&
+                    !type.IsAbstract);
+
+            if (solutionType == null)
+            {
+                Console.WriteLine($"Solution class not found for year {year}, day {day}");
+                Console.WriteLine($"(Looking for a class implementing ISolver in namespace {targetNamespace})");
+                return 1;
+            }
+
+            if (Activator.CreateInstance(solutionType) is not ISolver solution)
+            {
+                Console.WriteLine($"Failed to create instance of solution for year {year}, day {day}");
+                return 1;
+            }
+
+            Console.WriteLine($"Solving Advent of Code {year}, Day {day}:");
+            Console.WriteLine($"Part One: {solution.PartOne(input)}");
+            Console.WriteLine($"Part Two: {solution.PartTwo(input)}");
+            return 0;
+        });
+
+        return await rootCommand.Parse(args).InvokeAsync();
     }
 }
