@@ -5,6 +5,7 @@ namespace adventofcode.Lib
     public static class Extensions
     {
         public static string[] Lines(this string input) => input.Split(Environment.NewLine);
+        public static string[] Parts(this string input) => input.Split($"{Environment.NewLine}{Environment.NewLine}");
 
         public static IEnumerable<T> Repeated<T>(this IEnumerable<T> sequence)
         {

@@ -2,7 +2,7 @@
   "profiles": {
     "adventofcode": {
       "commandName": "Project",
-      "commandLineArgs": "2503 test",
+      "commandLineArgs": "2505 tricky",
       "workingDirectory": "C:\\Dev\\adventofcode"
     }
   }
