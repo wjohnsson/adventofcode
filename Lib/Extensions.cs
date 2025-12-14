@@ -31,5 +31,8 @@ namespace adventofcode.Lib
 
         public static T LeastCommonMultiple<T>(this IEnumerable<T> values) where T : INumber<T>
             => values.Aggregate(LeastCommonMultiple);
+
+        public static T Product<T>(this IEnumerable<T> values) where T : INumber<T>
+            => values.Aggregate(T.MultiplicativeIdentity, (product, val) => product * val);
     }
 }
