@@ -1,9 +1,8 @@
-using System.Data;
 using adventofcode.Lib;
 
 namespace AdventOfCode.Y2025.D08;
 
-partial class Laboratories : ISolver
+partial class Playground : ISolver
 {
     public object PartOne(string input)
     {
